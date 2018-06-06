@@ -1,5 +1,5 @@
-﻿//using KSPAPIExtensions.PartMessage;
-using KSPAPIExtensions;
+﻿﻿//using KSPAPIExtensions.PartMessage;
+﻿using KSPAPIExtensions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -322,6 +322,12 @@ namespace ProceduralParts
         [KSPField(isPersistant=true)]
         public string ablativeResource = "Ablator";
 
+        [KSPField (isPersistant = true)]
+        public string charringResource;
+
+        [KSPField]
+        public float outputMult;
+
         [KSPField]
         public FloatCurve CoPoffset = new FloatCurve();
 
@@ -627,9 +633,47 @@ namespace ProceduralParts
                             MaxAmountChanged(part, pr, pr.maxAmount);
                             InitialAmountChanged(part, pr, pr.maxAmount);
 
+                        //  Get the name of the resource used for the charring output.
 
+                        PartResource outputResource = part.Resources [charringResource];
+
+                        //  Before we start check if the output resource multiplier parameter exists
+                        //  in the part config.
+
+                        if (outputResource != null)
+                        {
+                            //  Calculate the maximum amount of the charring resource that the
+                            //  heat shield should have capacity for. Also zero the carried
+                            //  amount for it since we do not want to carry the charring resource
+                            //  with us...
+
+                            outputResource.maxAmount = (double) ablatorPerArea * outputMult * surfaceArea;
+                            outputResource.amount = 0;
+
+                            //  Set the maximum amount and initial amount of the charring resource.
+
+                            MaxAmountChanged (part, outputResource, outputResource.maxAmount);
+
+                            InitialAmountChanged (part, outputResource, outputResource.amount);
                         }
 
+                        //  Check if the heat shield implements a lifting surface module.
+                        //  Note: this will be ignored if FAR is installed.
+
+                        PartModule mls = part.Modules["ModuleLiftingSurface"];
+    
+                        if (mls != null)
+                        {
+                            const float liftingCoefficientPerArea = 0.34f;
+
+                            //  Calculate the deflection lift coefficient of the heat shield.
+
+                            float DeflectionLiftCoeff = surfaceArea * liftingCoefficientPerArea;
+
+                            //  And apply the value to the part itself.
+
+                            part.Modules.GetModule<ModuleLiftingSurface>().deflectionLiftCoeff = DeflectionLiftCoeff;
+                        }
                     }
 
                     //Debug.Log(massPerDiameter + " * " + diameter);
