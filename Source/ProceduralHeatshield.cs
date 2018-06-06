@@ -660,7 +660,7 @@ namespace ProceduralParts
                         //  Check if the heat shield implements a lifting surface module.
                         //  Note: this will be ignored if FAR is installed.
 
-                        PartModule mls = part.Modules["ModuleLiftingSurface"];
+                        PartModule mls = part.Modules.GetModule<ModuleLiftingSurface>();
     
                         if (mls != null)
                         {
