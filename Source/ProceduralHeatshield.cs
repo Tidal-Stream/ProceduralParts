@@ -632,6 +632,7 @@ namespace ProceduralParts
                             //ResourceListChanged();
                             MaxAmountChanged(part, pr, pr.maxAmount);
                             InitialAmountChanged(part, pr, pr.maxAmount);
+                        }
 
                         //  Get the name of the resource used for the charring output.
 
