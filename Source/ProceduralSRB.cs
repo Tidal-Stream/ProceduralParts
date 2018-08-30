@@ -789,16 +789,18 @@ namespace ProceduralParts
 
         internal const double DraperPoint = 798; 
 
-
         private void AnimateHeat()
         {
             // The emmissive module is too much effort to get working, just do it the easy way.
-            float num = (float)(Math.Max(part.temperature, part.skinTemperature) - DraperPoint);
-            if (float.IsNaN(num))
+            // color is 0..1, so we have to make sure it is 0 when part is below Draper Point and smoothly go to 1 after it is above. 
+            // So where is 1 then? Well, let it be 1000K, since iron is red at around 1000K
+            // on other hand bell is much closer to heat source, so it should heat better than entire part, so I reduce temperature to 900K (magic!)
+            float num = (float) ((Math.Max(part.skinTemperature, part.temperature) - DraperPoint) / 102f);
+            if (float.IsNaN(num) || num < 0) 
                 num = 0f;
 
             Material mat = selectedBell.model.GetComponent<Renderer>().sharedMaterial;
-            mat.SetColor("_EmissiveColor", new Color(num * num, 0, 0));
+            mat.SetColor("_EmissiveColor", new Color(num, 0, 0));
         }
 
         #endregion
