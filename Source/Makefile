@@ -13,9 +13,6 @@ else
 endif
 
 GAMEDATA	:= ${KSPDIR}/GameData
-APIGAMEDATA	:= ${GAMEDATA}/KSPAPIExt
-PLUGINDIR	:= ${APIGAMEDATA}/Plugins
-KSPAPIEXT	:= ../../KSPAPIExtensions/Source
 
 TARGETS		:= ProceduralParts.dll
 
@@ -36,10 +33,14 @@ API_FILES := \
 	zzVersionChecker.cs \
 	ICostModifier.cs \
 	VectorUtils.cs \
+	KSPUtils.cs \
+	UnityUtils.cs \
+	EngineWrapper.cs \
+	MathUtils.cs \
 	$e
 
 RESGEN2	:= resgen2
-GMCS	:= gmcs
+GMCS	:= mcs
 GIT		:= git
 TAR		:= tar
 ZIP		:= zip
@@ -61,8 +62,8 @@ info:
 	@echo "    Plugin:   ${PLUGINDIR}"
 
 ProceduralParts.dll: ${API_FILES}
-	${GMCS} -unsafe -t:library -lib:${APIEXTDATA},${MANAGED},${KSPAPIEXT} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine,KSPAPIExtensions \
+	${GMCS} -unsafe -t:library -lib:${MANAGED} \
+		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
 		-out:$@ $^
 
 clean:
