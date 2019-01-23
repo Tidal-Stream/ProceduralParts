@@ -63,7 +63,7 @@ info:
 
 ProceduralParts.dll: ${API_FILES}
 	${GMCS} -unsafe -t:library -lib:${MANAGED} \
-		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine \
+		-r:Assembly-CSharp,Assembly-CSharp-firstpass,UnityEngine,UnityEngine.UI \
 		-out:$@ $^
 
 clean:
