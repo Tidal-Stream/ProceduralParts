@@ -1452,6 +1452,17 @@ namespace ProceduralParts
 				childToParent = part.FindAttachNodeByPart(newParent);
 			}
 
+            bool srfAttached = false;
+			if (childToParent == null && newParent != null)
+            {
+                Debug.Log($"srf attach node={newParent.srfAttachNode}; {part.srfAttachNode}");
+                if (newParent.srfAttachNode != null)
+                {
+                    childToParent = newParent.srfAttachNode;
+                    srfAttached = true;
+                }
+            }
+
             if (shape == null || (newParent != null && childToParent == null)) //OnUpdate hasn't fired yet
             {
                 toAttach.Enqueue(() => PartParentChanged(newParent));
@@ -1479,7 +1490,13 @@ namespace ProceduralParts
             // ReSharper disable once InconsistentNaming
             Func<Vector3> Offset;
             if (nodeOffsets.TryGetValue(childToParent.id, out Offset))
+            {
                 position -= Offset();
+            }
+            else if(srfAttached)
+            {
+                position -= (childToParent.attachedPart.transform.position - childToParent.owner.transform.position);
+            }
 
             Part root = EditorLogic.SortedShipList[0];
 
