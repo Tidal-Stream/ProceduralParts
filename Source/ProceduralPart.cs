@@ -1437,11 +1437,11 @@ namespace ProceduralParts
                     Debug.LogWarning("Detaching from: " + part + " child: " + child.transform.name);
                     return;
                 }
-            Debug.LogWarning("*ST* Message recieved removing child, but can't find child");
+            Debug.LogWarning("*ST* Message received removing child, but can't find child");
         }
 
         //[PartMessageListener(typeof(PartParentChanged), scenes: GameSceneFilter.AnyEditor)]
-        public void PartParentChanged(Part newParent)
+        public void PartParentChanged(Part newParent, bool retry=false)
         {
 			if (HighLogic.LoadedScene != GameScenes.EDITOR)
 				return;
@@ -1453,9 +1453,9 @@ namespace ProceduralParts
 			}
 
             bool srfAttached = false;
-			if (childToParent == null && newParent != null)
+			if (retry && childToParent == null && newParent != null)
             {
-                Debug.Log($"srf attach node={newParent.srfAttachNode}; {part.srfAttachNode}");
+                Debug.Log($"part: {part.name}; parent: {newParent.name} srf attach node={newParent.srfAttachNode}; {part.srfAttachNode}");
                 if (newParent.srfAttachNode != null)
                 {
                     childToParent = newParent.srfAttachNode;
@@ -1465,14 +1465,15 @@ namespace ProceduralParts
 
             if (shape == null || (newParent != null && childToParent == null)) //OnUpdate hasn't fired yet
             {
-                toAttach.Enqueue(() => PartParentChanged(newParent));
+                // This is very ugly, but seems to be working.
+                toAttach.Enqueue(() => PartParentChanged(newParent, true));
                 return;
             }
             Debug.Log("ProceduralPart.PartParentChanged");
             if (parentAttachment != null)
             {
-                RemovePartAttachment(parentAttachment);
                 Debug.Log("ProceduralPart.PartParentChanged Detaching: " + part + " from parent: " + newParent);
+                RemovePartAttachment(parentAttachment);
                 parentAttachment = null;
             }
 
@@ -1486,6 +1487,7 @@ namespace ProceduralParts
             //    return;
             //}
             Vector3 position = transform.TransformPoint(childToParent.position);
+
             
             // ReSharper disable once InconsistentNaming
             Func<Vector3> Offset;
