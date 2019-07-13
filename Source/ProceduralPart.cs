@@ -1453,7 +1453,7 @@ namespace ProceduralParts
 			}
 
             bool srfAttached = false;
-			if (retry && childToParent == null && newParent != null)
+            if (retry && childToParent == null && newParent != null)
             {
                 Debug.Log($"part: {part.name}; parent: {newParent.name} srf attach node={newParent.srfAttachNode}; {part.srfAttachNode}");
                 if (newParent.srfAttachNode != null)
