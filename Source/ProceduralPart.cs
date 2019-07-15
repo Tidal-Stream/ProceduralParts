@@ -1441,7 +1441,7 @@ namespace ProceduralParts
         }
 
         //[PartMessageListener(typeof(PartParentChanged), scenes: GameSceneFilter.AnyEditor)]
-        public void PartParentChanged(Part newParent, bool retry=false)
+        public void PartParentChanged(Part newParent)
         {
 			if (HighLogic.LoadedScene != GameScenes.EDITOR)
 				return;
@@ -1453,22 +1453,19 @@ namespace ProceduralParts
 			}
 
             bool srfAttached = false;
-            if (retry && childToParent == null && newParent != null)
+            
+            if (childToParent == null && newParent?.srfAttachNode?.attachedPart == part)
             {
-                Debug.Log($"part: {part.name}; parent: {newParent.name} srf attach node={newParent.srfAttachNode}; {part.srfAttachNode}");
-                if (newParent.srfAttachNode != null)
-                {
-                    childToParent = newParent.srfAttachNode;
-                    srfAttached = true;
-                }
+                childToParent = newParent.srfAttachNode;
+                srfAttached = true;
             }
-
+            
             if (shape == null || (newParent != null && childToParent == null)) //OnUpdate hasn't fired yet
             {
-                // This is very ugly, but seems to be working.
-                toAttach.Enqueue(() => PartParentChanged(newParent, true));
+                toAttach.Enqueue(() => PartParentChanged(newParent));
                 return;
             }
+            
             Debug.Log("ProceduralPart.PartParentChanged");
             if (parentAttachment != null)
             {
