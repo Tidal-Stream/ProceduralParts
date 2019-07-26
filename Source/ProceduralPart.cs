@@ -1434,7 +1434,7 @@ namespace ProceduralParts
                 {
 
                     childAttach.Remove(node);
-                    Debug.LogWarning("Detaching from: " + part + " child: " + child.transform.name);
+                    Debug.LogWarning("Detaching from: " + part + " child: " + child?.transform?.name);
                     return;
                 }
             Debug.LogWarning("*ST* Message received removing child, but can't find child");
